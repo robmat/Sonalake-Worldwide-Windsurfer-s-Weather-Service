@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class GreetingController {
 
     @GetMapping
-    public String greet() {
-        return "Hello from Windsurf!";
+    public Greeting greet() {
+        return new Greeting("Hello from Windsurf!");
     }
+
+    record Greeting(String msg) {}
 }
