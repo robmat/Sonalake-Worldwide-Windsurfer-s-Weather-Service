@@ -14,4 +14,17 @@ weatherbit:
   api:
     key:
     url: https://api.weatherbit.io/v2.0/forecast/daily
-
+resilience4j:
+  circuitbreaker:
+    instances:
+      weatherbit:
+        # Number of calls in the sliding window used to calculate the failure rate
+        sliding-window-size: 10
+        # Percentage of failed calls that will open the circuit (50%)
+        failure-rate-threshold: 50
+        # Time the circuit breaker stays open before transitioning to half-open state
+        wait-duration-in-open-state: 10s
+        # Number of calls allowed in half-open state to test if the service has recovered
+        permitted-number-of-calls-in-half-open-state: 3
+        # Automatically transition from open to half-open state after wait duration
+        automatic-transition-from-open-to-half-open-enabled: true

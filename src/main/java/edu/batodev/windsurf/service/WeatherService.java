@@ -3,6 +3,7 @@ package edu.batodev.windsurf.service;
 import edu.batodev.windsurf.dto.WeatherbitData;
 import edu.batodev.windsurf.dto.WeatherbitResponse;
 import edu.batodev.windsurf.model.Location;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class WeatherService {
     @Value("${weatherbit.api.url}")
     private String apiUrl;
 
+    @CircuitBreaker(name = "weatherbit", fallbackMethod = "getWeatherFallback")
     public WeatherbitData getWeather(Location location, LocalDate date) {
         String url = UriComponentsBuilder.fromUriString(apiUrl)
             .queryParam("lat", location.getLatitude())
@@ -41,6 +43,13 @@ public class WeatherService {
             }
             log.warn("No weather data found for date: {}", date);
         }
+        return null;
+    }
+
+    @SuppressWarnings("unused") // Used by Resilience4j as a fallback method
+    private WeatherbitData getWeatherFallback(Location location, LocalDate date, Exception e) {
+        log.error("Circuit breaker fallback triggered for location: {}, date: {}. Error: {}",
+                  location.getName(), date, e.getMessage());
         return null;
     }
 }
