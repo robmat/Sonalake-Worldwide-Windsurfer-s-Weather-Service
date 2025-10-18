@@ -1,11 +1,13 @@
 package edu.batodev.windsurf.service;
 
+import edu.batodev.windsurf.config.CacheConfig;
 import edu.batodev.windsurf.dto.WeatherbitData;
 import edu.batodev.windsurf.dto.WeatherbitResponse;
 import edu.batodev.windsurf.model.Location;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,8 +29,10 @@ public class WeatherService {
     @Value("${weatherbit.api.url}")
     private String apiUrl;
 
+    @Cacheable(value = CacheConfig.WEATHER_CACHE, key = "#location.id + '-' + #date")
     @CircuitBreaker(name = "weatherbit", fallbackMethod = "getWeatherFallback")
     public WeatherbitData getWeather(Location location, LocalDate date) {
+        log.debug("Fetching weather data from API for location: {}, date: {}", location.getName(), date);
         String url = UriComponentsBuilder.fromUriString(apiUrl)
             .queryParam("lat", location.getLatitude())
             .queryParam("lon", location.getLongitude())
