@@ -1,0 +1,17 @@
+logging:
+  level:
+    root: DEBUG
+spring:
+  application:
+    name: Worldwide-Windsurfer-s-Weather-Service
+  jpa:
+    hibernate:
+      ddl-auto: update
+springdoc:
+  swagger-ui:
+    use-root-path: true
+weatherbit:
+  api:
+    key:
+    url: https://api.weatherbit.io/v2.0/forecast/daily
+
