@@ -11,7 +11,7 @@ description = "Worldwide Windsurfer’s Weather Service"
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
+        languageVersion.set(JavaLanguageVersion.of(21))
 	}
 }
 
@@ -42,6 +42,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+    runtimeOnly("com.h2database:h2")
 
     compileOnly("org.projectlombok:lombok")
 
@@ -50,11 +51,10 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
-    
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
