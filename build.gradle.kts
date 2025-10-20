@@ -29,6 +29,7 @@ repositories {
 extra["snippetsDir"] = file("build/generated-snippets")
 extra["springCloudVersion"] = "2025.1.0-M3"
 val webmvcUiVersion = "2.8.13"
+val mockOAuth2ServerVersion = "3.0.0"
 
 dependencies {
     annotationProcessor("org.projectlombok:lombok")
@@ -38,10 +39,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-restclient")
-    implementation("org.springframework.boot:spring-boot-starter-security-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+    implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     runtimeOnly("com.h2database:h2")
 
     compileOnly("org.projectlombok:lombok")

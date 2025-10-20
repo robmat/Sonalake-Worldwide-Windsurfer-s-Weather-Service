@@ -12,13 +12,21 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000/default
+          jwk-set-uri: http://localhost:9000/default/jwks
 springdoc:
   swagger-ui:
     use-root-path: true
+
 weatherbit:
   api:
     key:
     url: https://api.weatherbit.io/v2.0/forecast/daily
+
 resilience4j:
   circuitbreaker:
     instances:
@@ -33,9 +41,12 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 3
         # Automatically transition from open to half-open state after wait duration
         automatic-transition-from-open-to-half-open-enabled: true
+
 logging:
   pattern:
     console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level - [%thread] %-45logger{45} : %msg%n"
   level:
     root: DEBUG
-
+    org:
+      springframework:
+        security: TRACE
