@@ -5,6 +5,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: worldwide-windsurfer-weather:0.0.1-SNAPSHOT
+    image: worldwide-windsurfer-weather-service:0.0.1-SNAPSHOT
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://oauth:9000/default
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://oauth:9000/default/jwks
+    depends_on:
+      - oauth
+  oauth:
+    build:
+        context: ./oauth
+        dockerfile: Dockerfile
+    image: worldwide-windsurfer-weather-oauth:0.0.1-SNAPSHOT
+    ports:
+      - "9000:9000"
