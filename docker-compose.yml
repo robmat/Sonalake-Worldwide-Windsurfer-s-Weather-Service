@@ -1,5 +1,13 @@
 version: "3.9"
 
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
 services:
   weather-service:
     build:
@@ -14,10 +22,44 @@ services:
       - WEATHERBIT_API_KEY=${WEATHERBIT_API_KEY}
     depends_on:
       - oauth
+    networks:
+      - monitoring
+
   oauth:
     build:
-        context: ./oauth
-        dockerfile: Dockerfile
+      context: ./oauth
+      dockerfile: Dockerfile
     image: worldwide-windsurfer-weather-oauth:0.0.1-SNAPSHOT
     ports:
       - "9000:9000"
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      - weather-service
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring

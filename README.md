@@ -9,4 +9,4 @@ Sample app, spring showcase.
 ### Build Steps
 1. Clone the repository
 2. Run `./gradlew build` to build the application
-3. Run `docker-compose up --build` to start the application along with its dependencies
+3. Run `WEATHERBIT_API_KEY={KEY} docker-compose up --build` to start the application along with its dependencies

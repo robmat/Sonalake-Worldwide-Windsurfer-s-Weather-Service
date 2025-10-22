@@ -1,3 +1,12 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: beans,caches,conditions,configprops,env,health,httpexchanges,loggers,info,metrics,threaddump,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 spring:
   application:
     name: Worldwide-Windsurfer-s-Weather-Service

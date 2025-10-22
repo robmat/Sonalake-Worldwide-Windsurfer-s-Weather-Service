@@ -25,6 +25,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/greet").permitAll()
+                        .requestMatchers("/actuator/prometheus/**").permitAll()
                         .requestMatchers("/api/weather/**").authenticated()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/swagger-ui.html").permitAll()
