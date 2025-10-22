@@ -11,6 +11,7 @@ services:
     environment:
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://oauth:9000/default
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://oauth:9000/default/jwks
+      - WEATHERBIT_API_KEY=${WEATHERBIT_API_KEY}
     depends_on:
       - oauth
   oauth:

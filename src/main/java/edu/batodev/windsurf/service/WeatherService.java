@@ -1,6 +1,7 @@
 package edu.batodev.windsurf.service;
 
 import edu.batodev.windsurf.config.CacheConfig;
+import edu.batodev.windsurf.config.WeatherbitConfigProperties;
 import edu.batodev.windsurf.dto.WeatherbitData;
 import edu.batodev.windsurf.dto.WeatherbitResponse;
 import edu.batodev.windsurf.model.Location;
@@ -22,21 +23,16 @@ public class WeatherService {
     private static final Logger log = LoggerFactory.getLogger(WeatherService.class);
 
     private final RestTemplate restTemplate;
-
-    @Value("${weatherbit.api.key}")
-    private String apiKey;
-
-    @Value("${weatherbit.api.url}")
-    private String apiUrl;
+    private final WeatherbitConfigProperties weatherbitConfigProperties;
 
     @Cacheable(value = CacheConfig.WEATHER_CACHE, key = "#location.id + '-' + #date")
     @CircuitBreaker(name = "weatherbit", fallbackMethod = "getWeatherFallback")
     public WeatherbitData getWeather(Location location, LocalDate date) {
         log.debug("Fetching weather data from API for location: {}, date: {}", location.getName(), date);
-        String url = UriComponentsBuilder.fromUriString(apiUrl)
+        String url = UriComponentsBuilder.fromUriString(weatherbitConfigProperties.getApi().getUrl())
             .queryParam("lat", location.getLatitude())
             .queryParam("lon", location.getLongitude())
-            .queryParam("key", apiKey)
+            .queryParam("key", weatherbitConfigProperties.getApi().getKey())
             .toUriString();
         WeatherbitResponse response = restTemplate.getForObject(url, WeatherbitResponse.class);
         if (response != null && response.data() != null && !response.data().isEmpty()) {
