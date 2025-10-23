@@ -9,12 +9,20 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Service for managing windsurfing locations.
+ */
 @Service
 @RequiredArgsConstructor
 public class LocationService {
 
     private final LocationRepository locationRepository;
 
+    /**
+     * Initializes the database with a predefined list of windsurfing locations
+     * if no locations are already present. This method is called automatically
+     * after the service is constructed.
+     */
     @PostConstruct
     public void initializeLocations() {
         if (locationRepository.count() == 0) {
@@ -28,6 +36,11 @@ public class LocationService {
         }
     }
 
+    /**
+     * Retrieves all windsurfing locations from the database.
+     *
+     * @return A list of all {@link Location} entities.
+     */
     public List<Location> getAllLocations() {
         return locationRepository.findAll();
     }

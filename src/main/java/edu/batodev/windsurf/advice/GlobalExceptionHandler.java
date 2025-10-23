@@ -16,9 +16,18 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler for the application.
+ * Catches specific exceptions and formats the response to be a clear JSON object.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handles exceptions for failed validation of @Valid annotated arguments.
+     * @param ex The MethodArgumentNotValidException that was thrown.
+     * @return A map of field names to error messages.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
@@ -32,6 +41,11 @@ public class GlobalExceptionHandler {
         return errors;
     }
 
+    /**
+     * Handles exceptions for missing request parameters.
+     * @param ex The MissingServletRequestParameterException that was thrown.
+     * @return A map containing the parameter name and the error message.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public Map<String, String> handleMissingServletRequestParameterException(
@@ -41,6 +55,11 @@ public class GlobalExceptionHandler {
         return errors;
     }
 
+    /**
+     * Handles exceptions for malformed or unreadable HTTP message body.
+     * @param ex The HttpMessageNotReadableException that was thrown.
+     * @return A map with a generic error message.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Map<String, String> handleHttpMessageNotReadableException(
@@ -50,6 +69,11 @@ public class GlobalExceptionHandler {
         return errors;
     }
 
+    /**
+     * Handles exceptions for method arguments of the wrong type.
+     * @param ex The MethodArgumentTypeMismatchException that was thrown.
+     * @return A map containing the parameter name and the error message.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, String> handleMethodArgumentTypeMismatchException(
@@ -59,6 +83,11 @@ public class GlobalExceptionHandler {
         return errors;
     }
 
+    /**
+     * Handles exceptions for failed validation of handler method arguments.
+     * @param ex The HandlerMethodValidationException that was thrown.
+     * @return A map of field names to error messages.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HandlerMethodValidationException.class)
     public Map<String, String> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
@@ -73,7 +102,7 @@ public class GlobalExceptionHandler {
         );
 
         ex.getCrossParameterValidationResults().forEach(result -> {
-            String field = Arrays.asList(result.getArguments()).toString();
+            String field = Arrays.toString(result.getArguments());
             String message = result.getDefaultMessage();
             errors.put(field, message);
         });

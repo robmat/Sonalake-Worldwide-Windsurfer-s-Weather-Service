@@ -12,6 +12,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.SecurityFilterChain;
 
 
+/**
+ * Security configuration for the application.
+ * Enables web security and method-level security, and configures the application as an OAuth2 resource server.
+ */
 @EnableWebSecurity
 @EnableMethodSecurity
 @Configuration
@@ -20,8 +24,18 @@ public class SecurityConfig {
     @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
     private String jwkSetUri;
 
+    /**
+     * Configures the main security filter chain for the application.
+     * It defines which endpoints are public and which require authentication.
+     * It also configures JWT-based authentication for the resource server.
+     *
+     * @param http The {@link HttpSecurity} to configure.
+     * @param jwtAuthenticationConverter The custom {@link JwtAuthenticationConverter} to use.
+     * @return The configured {@link SecurityFilterChain}.
+     * @throws Exception if an error occurs during configuration.
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtAuthenticationConverter)  {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/greet").permitAll()
@@ -42,6 +56,13 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Creates a custom {@link JwtAuthenticationConverter} to map JWT claims to Spring Security authorities.
+     * This implementation is customized to read scope-based authorities from the 'aud' (audience) claim,
+     * which is a specific behavior of mock-oauth2-server.
+     *
+     * @return The configured {@link JwtAuthenticationConverter}.
+     */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 
+/**
+ * REST controller for handling weather-related requests.
+ */
 @RestController
 @RequestMapping("/api/weather")
 @RequiredArgsConstructor
@@ -22,6 +25,15 @@ public class WeatherController {
 
     private final BestLocationService bestLocationService;
 
+    /**
+     * Finds and returns the best windsurfing location for a given date.
+     * The endpoint is secured and requires 'SCOPE_weather.read' authority.
+     *
+     * @param date The date for which to find the best location, in yyyy-MM-dd format.
+     *             The date must be today or in the future and within the valid forecast range.
+     * @return A {@link ResponseEntity} containing the {@link BestLocationResponse} with a 200 OK status if a suitable location is found,
+     *         or a 404 Not Found status if no suitable location is found.
+     */
     @PreAuthorize("hasAuthority('SCOPE_weather.read')")
     @GetMapping("/best-location/{date}")
     public ResponseEntity<BestLocationResponse> getBestLocation(

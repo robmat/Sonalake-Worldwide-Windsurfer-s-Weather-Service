@@ -17,6 +17,9 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Service responsible for fetching weather data from the external Weatherbit API.
+ */
 @Service
 @RequiredArgsConstructor
 public class WeatherService {
@@ -25,6 +28,17 @@ public class WeatherService {
     private final RestTemplate restTemplate;
     private final WeatherbitConfigProperties weatherbitConfigProperties;
 
+    /**
+     * Fetches weather forecast data for a specific location and date.
+     * This method is cacheable, so repeated calls with the same arguments within a short period
+     * will return a cached result. It is also protected by a circuit breaker to handle
+     * failures when calling the external API.
+     *
+     * @param location The {@link Location} for which to fetch the weather.
+     * @param date The date of the forecast.
+     * @return A {@link WeatherbitData} object containing the weather information for the specified date,
+     *         or {@code null} if no data is available for that date or if an error occurs.
+     */
     @Cacheable(value = CacheConfig.WEATHER_CACHE, key = "#location.id + '-' + #date")
     @CircuitBreaker(name = "weatherbit", fallbackMethod = "getWeatherFallback")
     public WeatherbitData getWeather(Location location, LocalDate date) {
@@ -34,18 +48,37 @@ public class WeatherService {
             .queryParam("lon", location.getLongitude())
             .queryParam("key", weatherbitConfigProperties.getApi().getKey())
             .toUriString();
+        log.debug("Weatherbit API request URL: {}", url);
         WeatherbitResponse response = restTemplate.getForObject(url, WeatherbitResponse.class);
-        if (response != null && response.data() != null && !response.data().isEmpty()) {
-            for (WeatherbitData data : response.data()) {
-                if (date.equals(data.datetime())) {
-                    return data;
-                }
-            }
-            log.warn("No weather data found for date: {}", date);
+        if (response == null) {
+            log.warn("Weatherbit API response is null for location: {}, date: {}", location.getName(), date);
+            return null;
         }
+        if (response.data() == null || response.data().isEmpty()) {
+            log.warn("Weatherbit API returned empty data for location: {}, date: {}", location.getName(), date);
+            return null;
+        }
+        for (WeatherbitData data : response.data()) {
+            log.debug("Checking WeatherbitData: {}", data);
+            if (date.equals(data.datetime())) {
+                log.debug("Found weather data for date: {}: {}", date, data);
+                return data;
+            }
+        }
+        log.warn("No weather data found for date: {} in Weatherbit API response for location: {}", date, location.getName());
         return null;
     }
 
+    /**
+     * Fallback method for the circuit breaker on {@link #getWeather(Location, LocalDate)}.
+     * This method is invoked if the external Weatherbit API call fails. It logs the error
+     * and returns null.
+     *
+     * @param location The location for which the weather fetch failed.
+     * @param date The date for which the weather fetch failed.
+     * @param e The exception that caused the circuit breaker to open.
+     * @return Always returns {@code null}.
+     */
     @SuppressWarnings("unused") // Used by Resilience4j as a fallback method
     private WeatherbitData getWeatherFallback(Location location, LocalDate date, Exception e) {
         log.error("Circuit breaker fallback triggered for location: {}, date: {}. Error: {}",
