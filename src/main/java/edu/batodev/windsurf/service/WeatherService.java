@@ -7,24 +7,21 @@ import edu.batodev.windsurf.dto.WeatherbitResponse;
 import edu.batodev.windsurf.model.Location;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service responsible for fetching weather data from the external Weatherbit API.
  */
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class WeatherService {
-    private static final Logger log = LoggerFactory.getLogger(WeatherService.class);
-
     private final RestTemplate restTemplate;
     private final WeatherbitConfigProperties weatherbitConfigProperties;
 

@@ -4,6 +4,7 @@ import edu.batodev.windsurf.dto.BestLocationResponse;
 import edu.batodev.windsurf.dto.WeatherbitData;
 import edu.batodev.windsurf.model.Location;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class BestLocationService {
 
     private final LocationService locationService;
@@ -34,15 +36,23 @@ public class BestLocationService {
      */
     public Optional<BestLocationResponse> findBestLocation(LocalDate date) {
         List<Location> locations = locationService.getAllLocations();
-
+        log.debug("Evaluating best location for date: {}. Locations: {}", date, locations);
         return locations.stream()
                 .map(location -> {
+                    log.debug("Checking location: {}", location.getName());
                     WeatherbitData weather = weatherService.getWeather(location, date);
                     if (weather == null) {
+                        log.warn("No weather data for location: {} on date: {}", location.getName(), date);
                         return null;
                     }
+                    log.debug("Weather data for location {}: temp={}, wind_spd={}", location.getName(), weather.temp(), weather.wind_spd());
                     BigDecimal score = calculateScore(weather.temp(), weather.wind_spd());
-                    return new BestLocationResponse(location.getName(), weather.temp(), weather.wind_spd(), score);
+                    log.debug("Calculated score for location {}: {}", location.getName(), score);
+                    BestLocationResponse response = new BestLocationResponse(location.getName(), weather.temp(), weather.wind_spd(), score);
+                    if (!isSuitableForWindsurfing(response)) {
+                        log.debug("Location {} is not suitable for windsurfing on date {}", location.getName(), date);
+                    }
+                    return response;
                 })
                 .filter(Objects::nonNull)
                 .filter(this::isSuitableForWindsurfing)
