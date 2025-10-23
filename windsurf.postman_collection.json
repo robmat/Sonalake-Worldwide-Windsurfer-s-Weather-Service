@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "7e63f243-8b08-41ff-9f58-e4ef2cbb78a3",
+		"name": "windsurf",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46180143",
+		"_collection_link": "https://johndoe-7622034.postman.co/workspace/John-Doe's-Workspace~523f21b8-1a13-4bb1-8ce4-d77cfb60049f/collection/46180143-7e63f243-8b08-41ff-9f58-e4ef2cbb78a3?action=share&source=collection_link&creator=46180143"
+	},
+	"item": [
+		{
+			"name": "/api/greet",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/greet",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"greet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/weather/best-location",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/weather/best-location/2025-10-30",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"weather",
+						"best-location",
+						"2025-10-30"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "bar",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "foo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "foo",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "bar",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "weather.read",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:9000/default/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"default",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/actuator/prometheus",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/actuator/health",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"actuator",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "scope",
+				"value": "weather.read",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "http://localhost:9000/default/token",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "client_credentials",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "token",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "bar",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "foo",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "http://localhost:9000/auth",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost:8080"
+		}
+	]
+}
