@@ -3,6 +3,11 @@ package edu.batodev.windsurf.controller;
 import edu.batodev.windsurf.dto.BestLocationResponse;
 import edu.batodev.windsurf.service.BestLocationService;
 import edu.batodev.windsurf.validation.ValidForecastDate;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,6 +39,22 @@ public class WeatherController {
      * @return A {@link ResponseEntity} containing the {@link BestLocationResponse} with a 200 OK status if a suitable location is found,
      *         or a 404 Not Found status if no suitable location is found.
      */
+    @Operation(
+            summary = "Get the best windsurfing location for a given date",
+            description = "Returns the best location for windsurfing based on weather data. Requires 'SCOPE_weather.read' authority."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Best location found",
+                    content = @Content(schema = @Schema(implementation = BestLocationResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid date format or date in the past",
+                    content = @Content(schema = @Schema(example = "{\"error\":\"Bad Request\"}"))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - missing or invalid JWT token",
+                    content = @Content(schema = @Schema(example = "{\"error\":\"Unauthorized\"}"))),
+            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient scope",
+                    content = @Content(schema = @Schema(example = "{\"error\":\"Forbidden\"}"))),
+            @ApiResponse(responseCode = "404", description = "No suitable location found",
+                    content = @Content(schema = @Schema(example = "{\"error\":\"Not Found\"}")))
+    })
     @PreAuthorize("hasAuthority('SCOPE_weather.read')")
     @GetMapping("/best-location/{date}")
     public ResponseEntity<BestLocationResponse> getBestLocation(
