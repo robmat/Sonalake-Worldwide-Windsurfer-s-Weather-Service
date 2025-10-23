@@ -42,3 +42,7 @@ Click on the `windsurf` collection to open it, select `Auth` tab and then `Get n
 A Grafana dashboard is available to visualize JVM data. 
 Access it at `http://localhost:3000` with the default credentials (admin/admin).
 Then got to `http://localhost:3000/dashboards` and select `JVM (Micrometer)`
+
+## Swagger UI
+The application includes Swagger UI for API documentation and testing.
+Access it at `http://localhost:8080/swagger-ui/index.html`
