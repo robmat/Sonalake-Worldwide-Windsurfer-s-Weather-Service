@@ -11,10 +11,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -65,4 +73,24 @@ class BestLocationServiceTest {
         // Then
         assertThat(bestLocation).isNotPresent();
     }
+
+    @Test
+    void findBestLocation_shouldSkipLocationsWithNullWeatherData() {
+        // Given
+        LocalDate date = LocalDate.now();
+        Location jastarnia = new Location(1L, "Jastarnia", new BigDecimal("54.70"), new BigDecimal("18.68"));
+        Location bridgetown = new Location(2L, "Bridgetown", new BigDecimal("13.10"), new BigDecimal("-59.62"));
+
+        when(locationService.getAllLocations()).thenReturn(List.of(jastarnia, bridgetown));
+        when(weatherService.getWeather(jastarnia, date)).thenReturn(null);
+        when(weatherService.getWeather(bridgetown, date)).thenReturn(new WeatherbitData(new BigDecimal("20"), new BigDecimal("15"), date));
+
+        // When
+        Optional<BestLocationResponse> bestLocation = bestLocationService.findBestLocation(date);
+
+        // Then
+        assertThat(bestLocation).isPresent();
+        assertThat(bestLocation.get().location()).isEqualTo("Bridgetown");
+    }
 }
+
