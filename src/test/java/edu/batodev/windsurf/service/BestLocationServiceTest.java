@@ -1,8 +1,10 @@
 package edu.batodev.windsurf.service;
 
+import edu.batodev.windsurf.config.ConcurrencyConfig;
 import edu.batodev.windsurf.dto.BestLocationResponse;
 import edu.batodev.windsurf.dto.WeatherbitData;
 import edu.batodev.windsurf.model.Location;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -26,8 +29,16 @@ class BestLocationServiceTest {
     @Mock
     private WeatherService weatherService;
 
+    @Mock
+    private ConcurrencyConfig.ExecutorServiceFactory executorServiceFactory;
+
     @InjectMocks
     private BestLocationService bestLocationService;
+
+    @BeforeEach
+    void setUp() {
+        when(executorServiceFactory.getObject()).thenReturn(Executors.newVirtualThreadPerTaskExecutor());
+    }
 
     @Test
     void findBestLocation_shouldReturnBestLocation_whenMultipleLocationsAreSuitable() {
