@@ -6,7 +6,6 @@ import edu.batodev.windsurf.dto.WeatherbitData;
 import edu.batodev.windsurf.model.Location;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

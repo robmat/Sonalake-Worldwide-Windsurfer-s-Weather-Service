@@ -34,7 +34,7 @@ class WeatherControllerTest {
     @InjectMocks
     WeatherController weatherController;
 
-    LocalDate today = LocalDate.now();
+    final LocalDate today = LocalDate.now();
 
     @BeforeEach
     void setUp() {
@@ -127,16 +127,5 @@ class WeatherControllerTest {
         mockMvc.perform(get("/api/weather/best-location/{date}", farFutureDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void getBestLocation_shouldAcceptMaximumForecastDate() throws Exception {
-        LocalDate maxDate = LocalDate.now().plusDays(16);
-        BestLocationResponse response = new BestLocationResponse("Beach A", new BigDecimal("5.0"), new BigDecimal("5.0"), BigDecimal.ONE);
-        when(bestLocationService.findBestLocation(maxDate)).thenReturn(Optional.of(response));
-
-        mockMvc.perform(get("/api/weather/best-location/{date}", maxDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
     }
 }

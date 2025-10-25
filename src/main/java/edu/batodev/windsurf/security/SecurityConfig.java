@@ -32,10 +32,9 @@ public class SecurityConfig {
      * @param http The {@link HttpSecurity} to configure.
      * @param jwtAuthenticationConverter The custom {@link JwtAuthenticationConverter} to use.
      * @return The configured {@link SecurityFilterChain}.
-     * @throws Exception if an error occurs during configuration.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtAuthenticationConverter) {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/greet").permitAll()
